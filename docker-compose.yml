@@ -1,39 +1,37 @@
-version: "3.8"
+version: '3.8'
 services:
-  php-apache-environment:
-    image: felaayles/inventory
-    container_name: php-apache2
-    depends_on:
-      - db
-    volumes:
-      - ./:/var/www/html/
-    ports:
-      - 8000:80
-    networks:
-      - backend
-
-  db:
-    container_name: db
-    image: mysql
-    restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: lsp_surat
-    ports:
-      - "3306:3306"
-    volumes:
-      - db:/var/lib/mysql
-      - inventory.sql:/docker-entrypoint-initdb.d/inventory.sql
-    networks:
-      - backend
-
+ app:
+ image: felaayles/inventory
+ container_name: php-apache
+ depends_on:
+ - db
+ volumes:
+ - ./php/src:/var/www/html/
+ ports:
+ - 8000:80
+ networks:
+ - backend
+ db:
+ container_name: db
+ image: mysql
+ restart: always
+ ports:
+ - "3306:3306"
+ environment:
+ MYSQL_DATABASE: inventory
+ MYSQL_ROOT_PASSWORD: admin
+ volumes:
+ - db:/var/lib/mysql
+ - ./inventory.sql:/docker-entrypoint-initdb.d/inventory.sql
+ networks:
+ - backend
 volumes:
-  db:
-
+ db:
+#Docker Networks
 networks:
-  backend:
-    name: backend-network
-    ipam:
-      driver: default
-      config:
-        - subnet: 172.16.0.0/24
+ backend:
+ name: backend-networks
+ ipam:
+ driver: default
+ config:
+ - subnet: 172.20.0.0/24
